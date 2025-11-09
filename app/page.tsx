@@ -13,6 +13,10 @@ export default function Home() {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
+  const [selectedJob, setSelectedJob] = useState<string | null>(null)
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
+  // Added state for selected benefit and benefit detail modal
+  const [selectedBenefit, setSelectedBenefit] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
   const { messages, input, setInput, append } = useChat({
@@ -29,9 +33,93 @@ export default function Home() {
   const scrollToChat = () => chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
   useEffect(scrollToChat, [messages])
 
+  const jobDescriptions: Record<string, { title: string; desc: string; salary: string; benefits: string[] }> = {
+    nursing: {
+      title: "Điều dưỡng",
+      desc: "Làm việc tại các bệnh viện, viện dưỡng lão và trung tâm chăm sóc sức khỏe ở Đức. Đây là ngành được tuyển dụng nhiều nhất với nhu cầu lớn.",
+      salary: "28-35 triệu/tháng",
+      benefits: [
+        "Môi trường làm việc an toàn",
+        "Bảo hiểm y tế toàn diện",
+        "Cơ hội phát triển sự nghiệp",
+        "Nghỉ phép 30 ngày/năm",
+      ],
+    },
+    mechanics: {
+      title: "Cơ khí",
+      desc: "Làm việc tại các nhà máy sản xuất, lắp ráp máy móc công nghiệp. Công việc ổn định với thu nhập cao và môi trường làm việc chuyên nghiệp.",
+      salary: "25-32 triệu/tháng",
+      benefits: ["Mức lương cao", "Thưởng hiệu suất", "Đào tạo liên tục", "Phúc lợi tốt"],
+    },
+    construction: {
+      title: "Xây dựng",
+      desc: "Làm việc tại các công trình xây dựng, nhà máy, dự án cơ sở hạ tầng ở Đức. Công việc ổn định với thu nhập cao và cơ hội phát triển.",
+      salary: "26-34 triệu/tháng",
+      benefits: ["Thu nhập ổn định", "An toàn lao động", "Đào tạo chuyên nghiệp", "Cơ hội thăng tiến"],
+    },
+    hospitality: {
+      title: "Khách sạn & Ẩm thực",
+      desc: "Làm việc tại khách sạn 3-5 sao, nhà hàng cao cấp, hay các trung tâm hội nghị. Môi trường quốc tế, học hỏi trải nghiệm.",
+      salary: "22-28 triệu/tháng",
+      benefits: ["Hỗ trợ bữa ăn", "Môi trường quốc tế", "Hoa hồng tiền boa", "Cơ hội thăng tiến"],
+    },
+    other: {
+      title: "Các ngành khác",
+      desc: "Bao gồm: điện, nước, IT, logistics, giáo dục... Chúng tôi cũng tuyển dụng cho nhiều ngành khác tùy theo nhu cầu thị trường.",
+      salary: "24-40 triệu/tháng",
+      benefits: ["Tùy ngành", "Thu nhập cạnh tranh", "Điều kiện tốt", "Phát triển sự nghiệp"],
+    },
+  }
+
+  const validateForm = (formData: FormData) => {
+    const errors: Record<string, string> = {}
+
+    const name = formData.get("name") as string
+    const phone = formData.get("phone") as string
+    const birthYear = formData.get("birthYear") as string
+    const job = formData.get("job") as string
+
+    if (!name || name.trim().length < 3) {
+      errors.name = "Họ tên phải có ít nhất 3 ký tự"
+    }
+
+    // Phone validation: 10-11 digits, must be numeric
+    const phoneRegex = /^\d{10,11}$/
+    if (!phone || !phoneRegex.test(phone)) {
+      errors.phone = "Số điện thoại phải từ 10-11 chữ số"
+    }
+
+    // Birth year validation: exactly 4 digits
+    const birthYearRegex = /^\d{4}$/
+    if (!birthYear || !birthYearRegex.test(birthYear)) {
+      errors.birthYear = "Năm sinh phải là 4 chữ số (VD: 1995)"
+    } else {
+      const year = Number.parseInt(birthYear)
+      const currentYear = new Date().getFullYear()
+      if (year > currentYear - 18 || year < 1940) {
+        errors.birthYear = "Tuổi phải từ 18 trở lên"
+      }
+    }
+
+    if (!job) {
+      errors.job = "Vui lòng chọn ngành nghề"
+    }
+
+    return errors
+  }
+
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
+
+    const errors = validateForm(formData)
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors)
+      return
+    }
+
+    setFormErrors({})
+
     const data = {
       name: formData.get("name"),
       phone: formData.get("phone"),
@@ -49,11 +137,13 @@ export default function Home() {
       if (response.ok) {
         setShowSuccessModal(true)
         e.currentTarget.reset()
+        setIsFormSubmitted(true)
       }
     } catch (error) {
       localStorage.setItem("formSubmission", JSON.stringify(data))
       setShowSuccessModal(true)
       e.currentTarget.reset()
+      setIsFormSubmitted(true)
     }
   }
 
@@ -112,7 +202,7 @@ export default function Home() {
               </h1>
               <p className="text-lg text-gray-300 mb-8 leading-relaxed">
                 Bạn đang tìm cơ hội công việc với mức lương cao, phúc lợi châu Âu và lộ trình định cư? Chúng tôi sẽ giúp
-                bạn đạt được ước mơ đó tại Đức - đất nước có nền kinh tế lớn nhất châu Âu.
+                bạn đạt được ước mơ đó tại Đức, một đất nước có nền kinh tế lớn nhất châu Âu.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -158,14 +248,42 @@ export default function Home() {
 
           <div className="grid md:grid-cols-4 gap-6">
             {[
-              { icon: TrendingUp, title: "Thu nhập cao", desc: "25-40 triệu/tháng" },
-              { icon: Heart, title: "Phúc lợi tốt", desc: "Bảo hiểm, lương hưu, nghỉ phép" },
-              { icon: Users, title: "Môi trường làm việc", desc: "Tôn trọng quyền lao động" },
-              { icon: Globe, title: "Định cư lâu dài", desc: "Visa Blue Card & quốc tịch" },
+              {
+                icon: TrendingUp,
+                title: "Thu nhập cao",
+                desc: "25-40 triệu/tháng",
+                details:
+                  "Mức lương ở Đức cao gấp 4-5 lần so với Việt Nam. Thu nhập bắt đầu từ 25-40 triệu đồng/tháng tùy ngành. Các ngành như điều dưỡng, kỹ sư có thể lên tới 50 triệu/tháng sau khi có kinh nghiệm.",
+              },
+              {
+                icon: Heart,
+                title: "Phúc lợi tốt",
+                desc: "Bảo hiểm, lương hưu, nghỉ phép",
+                details:
+                  "Bảo hiểm y tế, bảo hiểm thất nghiệp, lương hưu, nhân thọ đều được công ty đóng. Nghỉ phép tối thiểu 30 ngày/năm, không cộng thêm nghỉ lễ. Bảo hiểm bao phủ toàn bộ chi phí y tế.",
+              },
+              {
+                icon: Users,
+                title: "Môi trường làm việc",
+                desc: "Tôn trọng quyền lao động",
+                details:
+                  "Đức có luật lao động chặt chẽ, bắt buộc công ty phải tuân thủ quyền lao động. Không bắt nạt, phân biệt đối xử. Quy trình khiếu nại rõ ràng, công bằng. Công ty thường tổ chức đào tạo, phát triển kỹ năng miễn phí.",
+              },
+              {
+                icon: Globe,
+                title: "Định cư lâu dài",
+                desc: "Visa Blue Card & quốc tịch",
+                details:
+                  "Sau 4 năm làm việc, bạn có thể xin Visa xanh (Blue Card). Sau 8 năm có thể xin quốc tịch Đức. Gia đình bạn cũng được quyền sống, học tập ở Đức. Cơ hội định cư vĩnh viễn tại một nước phát triển.",
+              },
             ].map((benefit, idx) => {
               const Icon = benefit.icon
               return (
-                <Card key={idx} className="p-6 hover:shadow-lg transition border-l-4 border-l-[#D00] bg-white">
+                <Card
+                  key={idx}
+                  onClick={() => setSelectedBenefit(benefit.title)}
+                  className="p-6 hover:shadow-lg transition border-l-4 border-l-[#D00] bg-white cursor-pointer transform hover:scale-105"
+                >
                   <div className="w-12 h-12 bg-gradient-to-br from-[#1A1A1A] to-[#D00] rounded-lg flex items-center justify-center mb-4">
                     <Icon className="w-6 h-6 text-[#FFCC00]" />
                   </div>
@@ -193,34 +311,40 @@ export default function Home() {
                 color: "from-[#1A1A1A] to-[#D00]",
                 desc: "Bệnh viện & chăm sóc",
                 icon: "/nurse-with-stethoscope.png",
+                key: "nursing",
               },
               {
                 name: "Cơ khí",
                 color: "from-[#D00] to-[#FFCC00]",
                 desc: "Sản xuất & lắp ráp",
                 icon: "/mechanical-engineer.jpg",
+                key: "mechanics",
               },
               {
                 name: "Xây dựng",
                 color: "from-[#FFCC00] to-[#1A1A1A]",
-                desc: "Công trình & nội thất",
-                icon: "/construction-worker-safety.png",
+                desc: "Công trình & xây lắp",
+                icon: "/real-construction-workers.jpg",
+                key: "construction",
               },
               {
                 name: "Khách sạn",
                 color: "from-[#1A1A1A] to-[#FFCC00]",
                 desc: "Du lịch & ẩm thực",
                 icon: "/chef-in-hotel.jpg",
+                key: "hospitality",
               },
               {
                 name: "Khác",
                 color: "from-[#D00] to-[#1A1A1A]",
                 desc: "Các ngành khác",
-                icon: "/professional-workers.jpg",
+                icon: "/office-worker-professional.jpg",
+                key: "other",
               },
             ].map((job, idx) => (
               <div
                 key={idx}
+                onClick={() => setSelectedJob(job.key)}
                 className="group cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
               >
                 <div className={`relative h-64 bg-gradient-to-br ${job.color} overflow-hidden`}>
@@ -347,44 +471,81 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Chứng thực từ những người thực</h2>
+            {/* Added description for testimonials */}
+            <p className="text-gray-600">
+              Hàng trăm người Việt Nam đã thay đổi cuộc đời nhờ chương trình xuất khẩu lao động Đức
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                name: "Nguyễn Văn A",
-                job: "Kỹ sư Cơ khí",
-                text: "Chương trình tuyệt vời! Tôi đã tìm được công việc với mức lương gấp 4 lần so với Việt Nam. Phúc lợi và môi trường làm việc rất tốt.",
-                image: "/professional-asian-man-engineer.jpg",
-              },
-              {
-                name: "Trần Thị B",
-                job: "Điều dưỡng",
-                text: "Tôi rất biết ơn đội hỗ trợ tận tình. Quá trình từ đăng ký đến xuất cảnh diễn ra suôn sẻ. Giờ tôi đã định cư tại Đức.",
+                name: "Nguyễn Thị Mai",
+                age: 28,
+                job: "Điều dưỡng viên",
+                location: "Berlin, Đức",
+                duration: "3 năm tại Đức",
+                text: "Từ khi sang Đức làm điều dưỡng, cuộc sống gia đình tôi thay đổi hoàn toàn. Lương tháng 3,200 Euro, được hưởng đầy đủ bảo hiểm và 28 ngày nghỉ phép. Môi trường làm việc chuyên nghiệp, được đồng nghiệp tôn trọng. Tôi đã mua được căn hộ và dự tính đưa gia đình sang sống.",
                 image: "/asian-woman-nurse-smiling.jpg",
+                stars: 5,
               },
               {
-                name: "Lê Minh C",
-                job: "Công nhân Xây dựng",
-                text: "Thu nhập cao, làm việc chuyên nghiệp. Đức là đất nước tuyệt vời để sống và làm việc. Tôi khuyến khích mọi người nên thử.",
-                image: "/asian-man-construction-worker.jpg",
+                name: "Trần Văn Hùng",
+                age: 32,
+                job: "Thợ cơ khí",
+                location: "Munich, Đức",
+                duration: "2 năm tại Đức",
+                text: "Lúc đầu tôi lo lắng về việc học tiếng Đức và thích nghi với công ty. Nhưng đội hỗ trợ trao dạo tân tinh từ khâu đào tạo đến khi vào nhà máy. Bây giờ tôi làm kỹ sư kiểm hóa dự án với mức lương 2,900 Euro/tháng, gửi tiền về cho gia đình và vẫn có tiền tiết kiệm. Công ty rất tốt trong kỳ năng và sự chuyên nghiệp.",
+                image: "/professional-asian-man-engineer.jpg",
+                stars: 5,
+              },
+              {
+                name: "Phạm Thị Lan",
+                age: 26,
+                job: "Nhân viên khách sạn",
+                location: "Frankfurt, Đức",
+                duration: "1.5 năm tại Đức",
+                text: "Chương trình xuất khẩu lao động Đức đã mở ra cánh cửa mới cho tôi. Từ nhân viên khách sạn ở Việt Nam với lương 8 triệu, giờ tôi làm tại khách sạn 5 sao ở Frankfurt với thu nhập 2,600 Euro/tháng. Được học thêm nhiều kỹ năng mới và có cơ hội thăng tiến. Cảm ơn đội ngũ tư vấn đã giúp tôi thực hiện ước mơ!",
+                image: "/hotel-staff-woman.jpg",
+                stars: 5,
               },
             ].map((testimonial, idx) => (
               <Card key={idx} className="p-6 border-l-4 border-l-[#FFCC00] bg-white hover:shadow-lg transition">
-                <div className="flex gap-4 mb-4">
+                <div className="mb-4 leading-5">
+                  {/* Stars */}
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(testimonial.stars)].map((_, i) => (
+                      <span key={i} className="text-[#FFCC00] text-lg">
+                        ★
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Quote mark */}
+                  <p className="text-5xl text-gray-300 leading-none mb-4">"</p>
+                </div>
+
+                {/* Testimonial text */}
+                <p className="text-gray-700 italic mb-6 leading-relaxed leading-5">{testimonial.text}</p>
+
+                {/* Person info */}
+                <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
                   <Image
                     src={testimonial.image || "/placeholder.svg"}
                     alt={testimonial.name}
-                    width={48}
-                    height={48}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-[#D00]"
+                    width={60}
+                    height={60}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-[#D00]"
                   />
                   <div>
-                    <p className="font-semibold text-[#1A1A1A]">{testimonial.name}</p>
-                    <p className="text-sm text-gray-600">{testimonial.job}</p>
+                    <p className="font-bold text-[#1A1A1A]">{testimonial.name}</p>
+                    <p className="text-sm font-semibold text-[#D00]">
+                      {testimonial.age} tuổi - {testimonial.job}
+                    </p>
+                    <p className="text-xs text-gray-600">{testimonial.location}</p>
+                    <p className="text-xs text-gray-500 font-medium">{testimonial.duration}</p>
                   </div>
                 </div>
-                <p className="text-gray-700 italic">{`"${testimonial.text}"`}</p>
               </Card>
             ))}
           </div>
@@ -412,6 +573,7 @@ export default function Home() {
                 className="bg-white text-[#1A1A1A] border-0"
                 placeholder="Nhập họ tên"
               />
+              {formErrors.name && <p className="text-red-300 text-sm mt-1">{formErrors.name}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Số điện thoại *</label>
@@ -420,8 +582,9 @@ export default function Home() {
                 name="phone"
                 required
                 className="bg-white text-[#1A1A1A] border-0"
-                placeholder="Nhập số điện thoại"
+                placeholder="Nhập số điện thoại (10-11 số)"
               />
+              {formErrors.phone && <p className="text-red-300 text-sm mt-1">{formErrors.phone}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -433,6 +596,7 @@ export default function Home() {
                   className="bg-white text-[#1A1A1A] border-0"
                   placeholder="1990"
                 />
+                {formErrors.birthYear && <p className="text-red-300 text-sm mt-1">{formErrors.birthYear}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Ngành nghề *</label>
@@ -444,18 +608,13 @@ export default function Home() {
                   <option value="hospitality">Khách sạn</option>
                   <option value="other">Khác</option>
                 </select>
+                {formErrors.job && <p className="text-red-300 text-sm mt-1">{formErrors.job}</p>}
               </div>
             </div>
             <Button type="submit" className="w-full bg-[#FFCC00] text-[#1A1A1A] hover:bg-[#E6B800] font-semibold h-12">
               Đăng ký ngay
             </Button>
           </form>
-
-          {isFormSubmitted && (
-            <div className="mt-4 p-4 bg-green-500 rounded-lg text-white text-center">
-              Đăng ký thành công! Chúng tôi sẽ liên hệ bạn sớm.
-            </div>
-          )}
         </div>
       </section>
 
@@ -542,6 +701,114 @@ export default function Home() {
         </div>
       )}
 
+      {/* Benefit Detail Modal */}
+      {selectedBenefit && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-[#FFCC00]">
+            <div className="bg-gradient-to-r from-[#1A1A1A] to-[#D00] text-white p-6 flex justify-between items-start">
+              <h2 className="text-2xl font-bold">{selectedBenefit}</h2>
+              <button onClick={() => setSelectedBenefit(null)} className="hover:bg-white/20 p-2 rounded transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              {selectedBenefit === "Thu nhập cao" && (
+                <div>
+                  <p className="text-gray-700 leading-relaxed">
+                    Mức lương ở Đức cao gấp 4-5 lần so với Việt Nam. Thu nhập bắt đầu từ 25-40 triệu đồng/tháng tùy
+                    ngành. Các ngành như điều dưỡng, kỹ sư có thể lên tới 50 triệu/tháng sau khi có kinh nghiệm.
+                  </p>
+                </div>
+              )}
+
+              {selectedBenefit === "Phúc lợi tốt" && (
+                <div>
+                  <p className="text-gray-700 leading-relaxed">
+                    Bảo hiểm y tế, bảo hiểm thất nghiệp, lương hưu, nhân thọ đều được công ty đóng. Nghỉ phép tối thiểu
+                    30 ngày/năm, không cộng thêm nghỉ lễ. Bảo hiểm bao phủ toàn bộ chi phí y tế.
+                  </p>
+                </div>
+              )}
+
+              {selectedBenefit === "Môi trường làm việc" && (
+                <div>
+                  <p className="text-gray-700 leading-relaxed">
+                    Đức có luật lao động chặt chẽ, bắt buộc công ty phải tuân thủ quyền lao động. Không bắt nạt, phân
+                    biệt đối xử. Quy trình khiếu nại rõ ràng, công bằng. Công ty thường tổ chức đào tạo, phát triển kỹ
+                    năng miễn phí.
+                  </p>
+                </div>
+              )}
+
+              {selectedBenefit === "Định cư lâu dài" && (
+                <div>
+                  <p className="text-gray-700 leading-relaxed">
+                    Sau 4 năm làm việc, bạn có thể xin Visa xanh (Blue Card). Sau 8 năm có thể xin quốc tịch Đức. Gia
+                    đình bạn cũng được quyền sống, học tập ở Đức. Cơ hội định cư vĩnh viễn tại một nước phát triển.
+                  </p>
+                </div>
+              )}
+
+              <Button
+                onClick={() => setSelectedBenefit(null)}
+                className="w-full bg-gradient-to-r from-[#1A1A1A] to-[#D00] text-[#FFCC00] hover:opacity-90 font-semibold h-12 mt-4"
+              >
+                Đóng
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {selectedJob && jobDescriptions[selectedJob] && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-[#D00]">
+            <div className="bg-gradient-to-r from-[#1A1A1A] to-[#D00] text-white p-6 flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-bold">{jobDescriptions[selectedJob].title}</h2>
+              </div>
+              <button onClick={() => setSelectedJob(null)} className="hover:bg-white/20 p-2 rounded transition">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div>
+                <p className="text-gray-700 leading-relaxed mb-4">{jobDescriptions[selectedJob].desc}</p>
+              </div>
+
+              <div className="bg-[#FFCC00]/10 border-l-4 border-l-[#FFCC00] p-4 rounded">
+                <p className="text-sm text-gray-600 mb-1">Mức lương:</p>
+                <p className="font-bold text-[#1A1A1A] text-lg">{jobDescriptions[selectedJob].salary}</p>
+              </div>
+
+              <div>
+                <p className="text-sm font-semibold text-[#1A1A1A] mb-3">Phúc lợi chính:</p>
+                <ul className="space-y-2">
+                  {jobDescriptions[selectedJob].benefits.map((benefit, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-gray-700">{benefit}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <Button
+                onClick={() => {
+                  setSelectedJob(null)
+                  document.getElementById("form")?.scrollIntoView({ behavior: "smooth" })
+                }}
+                className="w-full bg-gradient-to-r from-[#1A1A1A] to-[#D00] text-[#FFCC00] hover:opacity-90 font-semibold h-12 mt-4"
+              >
+                Đăng ký cho ngành này
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* Footer */}
       <footer className="bg-[#1A1A1A] text-white py-12 border-t-4 border-[#D00]">
         <div className="max-w-7xl mx-auto px-4">
@@ -555,7 +822,7 @@ export default function Home() {
             <div>
               <h3 className="font-bold text-lg mb-4 text-[#FFCC00]">Liên hệ</h3>
               <p className="text-gray-400 text-sm">Hotline: 0123456789</p>
-              <p className="text-gray-400 text-sm">Email: XuatkhaulaodongDuc@tmu.com</p>
+              <p className="text-gray-400 text-sm font-normal leading-5 text-justify">Email: XkldDuc@tmu.com</p>
             </div>
             <div>
               <h3 className="font-bold text-lg mb-4 text-[#FFCC00]">Địa chỉ</h3>
@@ -573,7 +840,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; 2025 Chương trình Xuất khẩo Lao động Đức. All rights reserved.</p>
+            <p>© 2025 Chương trình Xuất khẩu Lao động Đức. All rights reserved.</p>
           </div>
         </div>
       </footer>
@@ -612,14 +879,18 @@ export default function Home() {
             </div>
 
             <div className="border-t p-4 flex gap-2">
-              <Input
+              <input
+                type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleChatSend()}
                 placeholder="Nhập câu hỏi..."
-                className="border-gray-300"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D00]"
               />
-              <button onClick={handleChatSend} className="bg-[#FFCC00] text-[#1A1A1A] p-2 rounded hover:bg-[#E6B800]">
+              <button
+                onClick={handleChatSend}
+                className="bg-[#FFCC00] text-[#1A1A1A] p-2 rounded hover:bg-[#E6B800] transition"
+              >
                 <Send className="w-5 h-5" />
               </button>
             </div>

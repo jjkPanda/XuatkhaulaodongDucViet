@@ -11,6 +11,7 @@ import Image from "next/image"
 
 export default function Home() {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [chatOpen, setChatOpen] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
@@ -46,14 +47,12 @@ export default function Home() {
       })
 
       if (response.ok) {
-        setIsFormSubmitted(true)
-        setTimeout(() => setIsFormSubmitted(false), 3000)
+        setShowSuccessModal(true)
         e.currentTarget.reset()
       }
     } catch (error) {
       localStorage.setItem("formSubmission", JSON.stringify(data))
-      setIsFormSubmitted(true)
-      setTimeout(() => setIsFormSubmitted(false), 3000)
+      setShowSuccessModal(true)
       e.currentTarget.reset()
     }
   }
@@ -86,7 +85,12 @@ export default function Home() {
               Câu hỏi
             </a>
           </div>
-          <Button className="bg-[#FFCC00] text-[#1A1A1A] hover:bg-[#E6B800]">Đăng ký</Button>
+          <Button
+            className="bg-[#FFCC00] text-[#1A1A1A] hover:bg-[#E6B800]"
+            onClick={() => document.getElementById("form")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            Đăng ký
+          </Button>
         </div>
       </nav>
 
@@ -496,6 +500,47 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden border-4 border-[#1A1A1A]">
+            <div className="p-8 text-center">
+              {/* Success checkmark icon */}
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 bg-gradient-to-br from-[#1A1A1A] to-[#D00] rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-12 h-12 text-[#FFCC00]" />
+                </div>
+              </div>
+
+              <h2 className="text-3xl font-bold text-[#1A1A1A] mb-4">Cảm ơn bạn đã đăng ký!</h2>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Chúng tôi đã nhận được thông tin của bạn. Đội ngũ tư vấn sẽ liên hệ bạn trong vòng 24 giờ để tư vấn chi
+                tiết về chương trình phù hợp nhất.
+              </p>
+
+              <div className="space-y-3">
+                <Button
+                  onClick={() => setShowSuccessModal(false)}
+                  className="w-full bg-gradient-to-r from-[#1A1A1A] to-[#D00] text-[#FFCC00] hover:opacity-90 font-semibold h-12"
+                >
+                  Trở về trang chủ
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowSuccessModal(false)
+                    setChatOpen(true)
+                  }}
+                  variant="outline"
+                  className="w-full border-2 border-[#D00] text-[#1A1A1A] hover:bg-[#D00]/10 font-semibold h-12"
+                >
+                  Trò chuyện với AI
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="bg-[#1A1A1A] text-white py-12 border-t-4 border-[#D00]">

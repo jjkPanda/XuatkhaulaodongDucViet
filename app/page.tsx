@@ -124,7 +124,7 @@ export default function Home() {
                   variant="outline"
                   className="border-white text-white hover:bg-white/10 bg-transparent"
                 >
-                  Gọi hotline: 1900 XXXX
+                  Gọi hotline: 0123456789
                 </Button>
               </div>
             </div>
@@ -132,8 +132,8 @@ export default function Home() {
             <div className="relative">
               <div className="bg-gradient-to-br from-[#FFCC00] to-[#FFB700] rounded-2xl p-8 shadow-2xl overflow-hidden border-4 border-[#D00]">
                 <Image
-                  src="/professional-man-in-business-suit-holding-tablet-c.jpg"
-                  alt="Professional man in business suit"
+                  src="/workers-team-industrial.jpg"
+                  alt="Công nhân làm việc tại nhà máy Đức"
                   width={400}
                   height={400}
                   className="rounded-xl object-cover w-full"
@@ -509,8 +509,8 @@ export default function Home() {
             </div>
             <div>
               <h3 className="font-bold text-lg mb-4 text-[#FFCC00]">Liên hệ</h3>
-              <p className="text-gray-400 text-sm">Hotline: 1900 XXXX</p>
-              <p className="text-gray-400 text-sm">Email: info@xuatkhaoduc.com</p>
+              <p className="text-gray-400 text-sm">Hotline: 0123456789</p>
+              <p className="text-gray-400 text-sm">Email: XuatkhaulaodongDuc@tmu.com</p>
             </div>
             <div>
               <h3 className="font-bold text-lg mb-4 text-[#FFCC00]">Địa chỉ</h3>
@@ -598,8 +598,8 @@ export default function Home() {
             contactPoint: {
               "@type": "ContactPoint",
               contactType: "Customer Service",
-              telephone: "+84-1900-XXXX",
-              email: "info@xuatkhaoduc.com",
+              telephone: "+84-123-456-789",
+              email: "XuatkhaulaodongDuc@tmu.com",
             },
             address: {
               "@type": "PostalAddress",

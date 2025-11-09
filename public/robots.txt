@@ -1,0 +1,13 @@
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow private areas
+Disallow: /private/
+Disallow: /admin/
+
+# Sitemaps
+Sitemap: https://xuatkhaoduc.com/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

@@ -135,15 +135,13 @@ export default function Home() {
       })
 
       if (response.ok) {
-        setShowSuccessModal(true)
         e.currentTarget.reset()
-        setIsFormSubmitted(true)
+        window.location.href = "/thank-you"
       }
     } catch (error) {
       localStorage.setItem("formSubmission", JSON.stringify(data))
-      setShowSuccessModal(true)
       e.currentTarget.reset()
-      setIsFormSubmitted(true)
+      window.location.href = "/thank-you"
     }
   }
 

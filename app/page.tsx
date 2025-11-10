@@ -222,13 +222,13 @@ export default function Home() {
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-[#FFCC00] to-[#FFB700] rounded-2xl p-8 shadow-2xl overflow-hidden border-4 border-[#D00]">
+              <div className="bg-gradient-to-br from-[#FFCC00] to-[#FFB700] rounded-2xl p-12 shadow-2xl overflow-hidden border-4 border-[#D00] h-96">
                 <Image
-                  src="/workers-team-industrial.jpg"
+                  src="/images/design-mode/Overview-Bonn-decision-Berlin-Germany.webp"
                   alt="Công nhân làm việc tại nhà máy Đức"
-                  width={400}
-                  height={400}
-                  className="rounded-xl object-cover w-full"
+                  width={500}
+                  height={500}
+                  className="rounded-xl object-cover w-full h-full"
                 />
               </div>
             </div>
@@ -476,10 +476,15 @@ export default function Home() {
       <section className="py-16 md:py-24 border-b-4 border-[#D00]">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4 text-center">Những câu chuyện thành công                 </h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4 text-center">
+              Những câu chuyện thành công{" "}
+            </h2>
             {/* Added description for testimonials */}
             <p className="text-gray-600 text-justify">
-              Hàng nghìn người Việt đã chọn Đức là điểm đến để thay đổi cuộc sống. Với môi trường làm việc chuyên nghiệp, mức thu nhập cao và chính sách phúc lợi vượt trội, họ đã tìm thấy cơ hội phát triển thực sự. Dưới đây là những câu chuyện truyền cảm hứng từ chính những người lao động Việt Nam đang sinh sống và làm việc tại Đức
+              Hàng nghìn người Việt đã chọn Đức là điểm đến để thay đổi cuộc sống. Với môi trường làm việc chuyên
+              nghiệp, mức thu nhập cao và chính sách phúc lợi vượt trội, họ đã tìm thấy cơ hội phát triển thực sự. Dưới
+              đây là những câu chuyện truyền cảm hứng từ chính những người lao động Việt Nam đang sinh sống và làm việc
+              tại Đức
             </p>
           </div>
 

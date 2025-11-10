@@ -157,7 +157,7 @@ export default function Home() {
       <nav className="bg-[#1A1A1A] text-white px-4 py-4 sticky top-0 z-40 border-b-4 border-[#FFCC00]">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-xl">Xuất Khẩu Đức 2025</span>
+            <span className="font-bold text-xl">Xuất Khẩu Đức Lao động VO </span>
           </div>
           <div className="hidden md:flex gap-8">
             <a href="#benefits" className="hover:text-[#FFCC00] transition">
@@ -200,7 +200,7 @@ export default function Home() {
               </h1>
               <p className="text-lg text-gray-300 mb-8 leading-relaxed">
                 Bạn đang tìm cơ hội công việc với mức lương cao, phúc lợi châu Âu và lộ trình định cư? Chúng tôi sẽ giúp
-                bạn đạt được ước mơ đó tại Đức, một đất nước có nền kinh tế lớn nhất châu Âu.
+                bạn đạt được ước mơ đó tại Đức, một đất nước có nền kinh tế lớn bậc nhất Châu Âu
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -241,7 +241,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Lợi ích vượt trội</h2>
-            <p className="text-gray-600 text-lg">So với các quốc gia khác, Đức cung cấp cơ hội tốt nhất</p>
+            <p className="text-gray-600 text-lg text-justify text-balance">
+              Đức là điểm đến lý tưởng cho người lao động Việt Nam nhờ mức thu nhập cao, chế độ phúc lợi xã hội hàng đầu
+              và cơ hội phát triển lâu dài. Khi làm việc tại Đức, bạn được đào tạo nghề bài bản theo chuẩn châu Âu, làm
+              việc trong môi trường chuyên nghiệp, an toàn và minh bạch
+            </p>
           </div>
 
           <div className="grid md:grid-cols-4 gap-6">
@@ -299,7 +303,11 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Ngành nghề tuyển dụng</h2>
-            <p className="text-gray-600 text-lg">Chúng tôi tuyển dụng cho các ngành công nghiệp chính của Đức</p>
+            <p className="text-gray-600 text-lg text-justify">
+              {
+                "Chúng tôi tuyển dụng lao động sang Đức trong các ngành nghề trọng điểm như điều dưỡng, kỹ thuật cơ khí, xây dựng, điện – điện tử, và nhà hàng – khách sạn.\nMỗi ngành nghề đều được bảo đảm về hợp đồng lao động rõ ràng, mức lương cao, đào tạo bài bản và hỗ trợ định cư lâu dài"
+              }
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -408,7 +416,7 @@ export default function Home() {
                 },
                 {
                   step: 2,
-                  title: "Chọn đơn hàng & Phỏng vấn",
+                  title: "Chọn dịch vụ & Phỏng vấn",
                   desc: "Xem danh sách các công ty tuyển dụng ở Đức. Phỏng vấn trực tuyến hoặc trực tiếp để xác định phù hợp.",
                   time: "1-2 tuần",
                   benefits: ["Nhiều lựa chọn công việc", "Phỏng vấn chuyên nghiệp"],
@@ -468,10 +476,10 @@ export default function Home() {
       <section className="py-16 md:py-24 border-b-4 border-[#D00]">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Chứng thực từ những người thực</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4 text-center">Những câu chuyện thành công                 </h2>
             {/* Added description for testimonials */}
-            <p className="text-gray-600">
-              Hàng trăm người Việt Nam đã thay đổi cuộc đời nhờ chương trình xuất khẩu lao động Đức
+            <p className="text-gray-600 text-justify">
+              Hàng nghìn người Việt đã chọn Đức là điểm đến để thay đổi cuộc sống. Với môi trường làm việc chuyên nghiệp, mức thu nhập cao và chính sách phúc lợi vượt trội, họ đã tìm thấy cơ hội phát triển thực sự. Dưới đây là những câu chuyện truyền cảm hứng từ chính những người lao động Việt Nam đang sinh sống và làm việc tại Đức
             </p>
           </div>
 
@@ -563,7 +571,7 @@ export default function Home() {
 
           <form onSubmit={handleFormSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Họ tên *</label>
+              <label className="block text-sm font-medium mb-2">Họ và tên *</label>
               <Input
                 type="text"
                 name="name"
@@ -591,7 +599,7 @@ export default function Home() {
                   type="number"
                   name="birthYear"
                   required
-                  className="bg-white text-[#1A1A1A] border-0"
+                  className="bg-white text-[#1A1A1A] border-0 rounded-md px-3 py-2"
                   placeholder="1990"
                 />
                 {formErrors.birthYear && <p className="text-red-300 text-sm mt-1">{formErrors.birthYear}</p>}
@@ -732,9 +740,9 @@ export default function Home() {
               {selectedBenefit === "Môi trường làm việc" && (
                 <div>
                   <p className="text-gray-700 leading-relaxed">
-                    Đức có luật lao động chặt chẽ, bắt buộc công ty phải tuân thủ quyền lao động. Không bắt nạt, phân
-                    biệt đối xử. Quy trình khiếu nại rõ ràng, công bằng. Công ty thường tổ chức đào tạo, phát triển kỹ
-                    năng miễn phí.
+                    Môi trường làm việc tại Đức chuyên nghiệp, kỷ luật và minh bạch, giúp người lao động phát triển bền
+                    vững. Doanh nghiệp Đức đề cao hiệu quả, đúng giờ và an toàn lao động, đồng thời đảm bảo đầy đủ quyền
+                    lợi và phúc lợi xã hội
                   </p>
                 </div>
               )}
@@ -742,8 +750,9 @@ export default function Home() {
               {selectedBenefit === "Định cư lâu dài" && (
                 <div>
                   <p className="text-gray-700 leading-relaxed">
-                    Sau 4 năm làm việc, bạn có thể xin Visa xanh (Blue Card). Sau 8 năm có thể xin quốc tịch Đức. Gia
-                    đình bạn cũng được quyền sống, học tập ở Đức. Cơ hội định cư vĩnh viễn tại một nước phát triển.
+                    Đức là quốc gia có chính sách định cư minh bạch và nhiều ưu đãi cho người lao động nước ngoài. Sau
+                    3–5 năm làm việc và đóng thuế đầy đủ, bạn có thể xin thẻ cư trú dài hạn hoặc quốc tịch Đức, đồng
+                    thời được quyền bảo lãnh người thân sang sinh sống hợp pháp
                   </p>
                 </div>
               )}
@@ -820,7 +829,7 @@ export default function Home() {
             <div>
               <h3 className="font-bold text-lg mb-4 text-[#FFCC00]">Liên hệ</h3>
               <p className="text-gray-400 text-sm">Hotline: 0123456789</p>
-              <p className="text-gray-400 text-sm font-normal leading-5 text-justify">Email: XkldDuc@tmu.com</p>
+              <p className="text-gray-400 text-sm font-normal leading-5 text-justify">Email: XkldDucVO@tmu.com</p>
             </div>
             <div>
               <h3 className="font-bold text-lg mb-4 text-[#FFCC00]">Địa chỉ</h3>
